@@ -1,0 +1,86 @@
+
+
+
+.form {
+    height: 20vh; /* Magic here */
+    width: 800px;
+  display: block;
+  justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 15%;
+    left: 40%;
+}
+.contactForm {
+    height: 20vh; /* Magic here */
+    width: 800px;
+  display: block;
+  justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 10%;
+    left: 25%;
+}
+
+.contactForm input {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: grey;
+    margin-right: 10px;
+}
+
+.header input {
+float: left;
+position: relative;
+top: 18px;
+left: 10px;
+    
+}
+p {
+    color: red;
+}
+
+.header h1 {
+    float: left;
+
+}
+
+.contactList {
+    height: 20vh; /* Magic here */
+  justify-content: center;
+    align-items: right;
+    display: block;
+    position: absolute;
+    top: 60%;
+    
+}
+.contactList input {
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 8px;
+
+}
+
+li {
+    font-size: 25px;
+    display: flex;
+    position: relative;
+    list-style: none;
+    padding: 10px 20px;
+}
+
+body {
+    background: #424242;
+}
+input {
+  background: none;
+  color: mix(white, #424242, 70%);
+  font-size: 18px;
+  /*width: 320px; */
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid mix(white, #424242, 70%);
+}
+input:hover {
+    background-color: white;
+}
