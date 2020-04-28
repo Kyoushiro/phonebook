@@ -18,14 +18,7 @@ class App extends Component {
       index: "",
       filtered: [],
 
-      contacts: [{
-        name: "",
-        phoneNumber: "",
-        email: "",
-        editMode: false
-
-
-      }]
+      contacts: []
 
     }
 
@@ -49,7 +42,6 @@ class App extends Component {
     this.setState({
       contacts: obj
     })
-    console.log(this.state.contacts);
   }
 
   // update selected contact
@@ -106,20 +98,27 @@ class App extends Component {
   }
   // Delete contact from list
   deleteContact(id) {
+    console.log(id);
+    console.log(this.state.contacts);
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact !== id)
     }));
+    console.log(this.state.contacts);
   }
   // when user clicks delete button, opens up confirmation buttons
-  activateEdit(index) {
+  activateEdit(contact) {
     let contacts = [...this.state.contacts];
-    contacts[index].editMode = true
+
+    var newIndex = this.state.contacts.findIndex(cont => cont.phoneNumber === contact.phoneNumber);
+    contacts[newIndex].editMode = true
     this.setState({ contacts });
   }
   // when user presses cancel when trying to delete a contact, brings back delete button.
-  deActivateEdit(index) {
+  deActivateEdit(contact) {
     let contacts = [...this.state.contacts];
-    contacts[index].editMode = false
+    var newIndex = this.state.contacts.findIndex(cont => cont.phoneNumber === contact.phoneNumber);
+    console.log(contacts);
+    contacts[newIndex].editMode = false
     this.setState({ contacts });
   }
 
