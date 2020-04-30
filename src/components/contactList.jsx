@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import Delete from "../images/delete.png";
-import Cancel from "../images/cancel.png";
-import Accept from "../images/accept.png";
+import Delete from "../images/delete.svg";
+import Cancel from "../images/cancel.svg";
+import Accept from "../images/accept.svg";
 
 class ContactList extends Component {
     constructor(props) {
@@ -39,21 +39,24 @@ class ContactList extends Component {
         this.setState({
             filtered: newList
         })
+        console.log("after search");
+        console.log(this.state.filtered);
+        console.log(newList);
 
     }
+
     // needed so list can be mapped
     componentDidMount() {
+        console.log("is called");
         this.setState({
             filtered: this.props.contacts
         });
+        console.log("filtered list on didmount");
+        console.log(this.state.filtered);
 
     }
-    //Makes sure that the component got props
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            filtered: nextProps.contacts
-        });
-    }
+
+
 
 
     // Checks which button is clicked and acts accordingly.
@@ -61,15 +64,29 @@ class ContactList extends Component {
 
 
         if (event.target.name === "deleteButton") {
+            console.log("let's delete");
             this.props.deleteContact(contact);
+
+            this.setState(prevState => ({
+                filtered: prevState.filtered.filter(contact => contact !== contact)
+            }));
+
+            console.log("new filtered list:");
+            console.log(this.state.filtered);
+            console.log(this.props.contacts);
+
+
         }
         else if (event.target.name === "deleteConfirm") {
-            this.props.activateEdit(index);
 
+            this.props.activateEdit(contact, index, this.state.filtered);
+            this.setState(prevState => ({
+                filtered: prevState.filtered.filter(contact => contact !== contact)
+            }));
 
         }
         else if (event.target.name === "deleteCancel") {
-            this.props.deActivateEdit(index);
+            this.props.deActivateEdit(contact);
 
         }
         else {
@@ -77,20 +94,61 @@ class ContactList extends Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        console.log("did update");
+        console.log(this.props.contacts);
+        console.log(prevProps.contacts);
+        console.log(this.state.filtered);
+        var newList = [];
+        console.log(this.refs.searchInput.value);
+
+        if (prevProps.contacts !== this.props.contacts) {
+
+            if (this.refs.searchInput.value !== "") {
+                console.log("we are doing this");
+                newList = this.props.contacts.filter(item => {
+                    const searchName = item.name.toString().toLowerCase();
+                    const searchEmail = item.email.toString().toLowerCase();
+                    const filter = this.refs.searchInput.value.toString().toLowerCase();
+
+                    return (
+                        searchName.includes(filter) +
+                        searchEmail.includes(filter)
+                    );
+                });
+            }
+            else {
+                newList = this.props.contacts
+            }
+            this.setState({
+                filtered: newList
+            });
+        }
+        console.log(this.state.filtered);
+    }
+
 
 
     render() {
 
+        console.log("props");
+        console.log(this.props.contacts);
+        console.log(this.state.filtered);
+
+
         if (this.state.filtered) {
 
             return (
+
+
                 <div className="contactList">
 
 
                     <input type="text"
-                        className="input"
+                        className="inputSearch"
                         placeholder="Search..."
                         onChange={this.search}
+                        ref="searchInput"
                     />
 
 
@@ -98,12 +156,12 @@ class ContactList extends Component {
 
                     <ul>
                         {this.state.filtered.map((contact, index) =>
-                            <li key={contact.phoneNumber}
+                            <li key={contact.id}
                                 onClick={(event) =>
                                     this.handleClick(contact, index, event)}
                                 style={{ cursor: 'pointer' }}
                             >
-                                <div>{contact.name}</div>
+                                <div className="cell">{contact.name}</div>
                                 {contact.editMode ? [<input
                                     type="image"
                                     name="deleteButton"

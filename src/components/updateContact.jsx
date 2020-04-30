@@ -14,7 +14,7 @@ class updateContact extends Component {
     updateContact(contact) {
         console.log("we are here");
         this.props.updateList(contact, this.props.index);
-        this.props.backToHome();
+        this.props.toggleUpdate();
 
     }
     // allows to write into input field
@@ -40,6 +40,8 @@ class updateContact extends Component {
                 phoneNumberWrong={this.state.phoneNumberWrong}
                 contacts={this.props.contacts}
                 index={this.props.index}
+                id={this.props.id}
+                toggleUpdate={this.props.toggleUpdate}
             />
 
 
