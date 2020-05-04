@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/phonebook/static/css/main.82960e02.chunk.css",
+    "main.js": "/phonebook/static/js/main.c64c7163.chunk.js",
+    "main.js.map": "/phonebook/static/js/main.c64c7163.chunk.js.map",
+    "runtime-main.js": "/phonebook/static/js/runtime-main.b60f526a.js",
+    "runtime-main.js.map": "/phonebook/static/js/runtime-main.b60f526a.js.map",
+    "static/js/2.f183514c.chunk.js": "/phonebook/static/js/2.f183514c.chunk.js",
+    "static/js/2.f183514c.chunk.js.map": "/phonebook/static/js/2.f183514c.chunk.js.map",
+    "index.html": "/phonebook/index.html",
+    "precache-manifest.cace4849096af10f2c06aea6bd007239.js": "/phonebook/precache-manifest.cace4849096af10f2c06aea6bd007239.js",
+    "service-worker.js": "/phonebook/service-worker.js",
+    "static/css/main.82960e02.chunk.css.map": "/phonebook/static/css/main.82960e02.chunk.css.map",
+    "static/js/2.f183514c.chunk.js.LICENSE.txt": "/phonebook/static/js/2.f183514c.chunk.js.LICENSE.txt",
+    "static/media/accept.svg": "/phonebook/static/media/accept.ce8e2a41.svg",
+    "static/media/arrowLeft.svg": "/phonebook/static/media/arrowLeft.713fe29d.svg",
+    "static/media/cancel.svg": "/phonebook/static/media/cancel.2c5552a1.svg",
+    "static/media/delete.svg": "/phonebook/static/media/delete.da296998.svg",
+    "static/media/user-plus-solid.svg": "/phonebook/static/media/user-plus-solid.7465375f.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.b60f526a.js",
+    "static/js/2.f183514c.chunk.js",
+    "static/css/main.82960e02.chunk.css",
+    "static/js/main.c64c7163.chunk.js"
+  ]
+}
