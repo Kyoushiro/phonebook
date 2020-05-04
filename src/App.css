@@ -58,8 +58,16 @@
 
   .container {
       border-style: solid;
-      padding: 20px 100px;
-      overflow: hidden;
+      padding: 60px 100px 100px;
+      border-radius: 20px;
+      overflow: scroll;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      
+  }
+
+  .container::-webkit-scrollbar {
+    display: none;
   }
   
 
@@ -79,9 +87,9 @@
     text-align: center;
     padding-bottom: 44px;
     padding-left: 100px;
-
     margin: 0px;
   }
+
 
   .header input[type="image"] {
     width: 50px;
@@ -95,9 +103,11 @@
       padding: 15px 10px;
       color: #0d39ff;
       text-decoration: underline;
+      
   }
   ul {
       display: table;
+      
   }
 
 
@@ -115,7 +125,7 @@
       justify-content: center;
       align-items: right;
       display: inline-block;
-      top: 20%
+      top: 20%;
   }
 
   .contactList input[type="image"] {
@@ -129,6 +139,7 @@
     padding-top: 10px;
     padding-bottom: 10px;
     font-size: 25px;
+    
     
 }
 
@@ -216,6 +227,14 @@
   }
   .contactContainer h1 {
     color: rgb(255, 253, 253);
+  }
+
+  .noContacts{
+    float: left;
+    position: absolute;
+    top: 20%;
+    left: 40%;
+
   }
   
   

@@ -95,12 +95,8 @@ class ContactList extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log("did update");
-        console.log(this.props.contacts);
-        console.log(prevProps.contacts);
-        console.log(this.state.filtered);
+
         var newList = [];
-        console.log(this.refs.searchInput.value);
 
         if (prevProps.contacts !== this.props.contacts) {
 
@@ -131,9 +127,6 @@ class ContactList extends Component {
 
     render() {
 
-        console.log("props");
-        console.log(this.props.contacts);
-        console.log(this.state.filtered);
 
 
         if (this.state.filtered) {

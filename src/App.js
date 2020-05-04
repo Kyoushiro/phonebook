@@ -63,15 +63,20 @@ class App extends Component {
     console.log(index);
 
     let contacts = [...this.state.contacts];
+    console.log(contact.id);
     var newIndex = contacts.findIndex(cont => cont.id === contact.id);
     let item = { ...contacts[index] };
     item.name = contact.name;
     item.phoneNumber = contact.phoneNumber;
     item.email = contact.email;
+    item.id = contact.id;
     contacts[newIndex] = item;
     this.setState({ contacts });
+    console.log("new index");
+    console.log(newIndex);
 
   }
+
 
 
   // Change page view to AddContact
@@ -159,7 +164,6 @@ class App extends Component {
 
 
     var isListItem = this.state.isListItem;
-    console.log("home:");
 
 
     return (

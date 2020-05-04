@@ -13,6 +13,9 @@ class updateContact extends Component {
     // Validates contact and then updates the contact
     updateContact(contact) {
         console.log("we are here");
+        console.log("id");
+        console.log(contact.id);
+        console.log(contact.phoneNumber);
         this.props.updateList(contact, this.props.index);
         this.props.toggleUpdate();
 

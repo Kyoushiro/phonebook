@@ -105,8 +105,10 @@ class ContactForm extends Component {
         var name = event.target.name.value;
         var phoneNumber = event.target.phoneNumber.value;
         var email = event.target.email.value;
-        var id = event.target.id.value;
+        var id = this.props.id;
         var contact = { 'name': name, 'phoneNumber': phoneNumber, 'email': email, 'id': id };
+        console.log("id:");
+        console.log(id);
         if (this.state.emailWrong || this.state.phoneNumberWrong) {
             alert("form not valid yet");
         }
@@ -201,6 +203,7 @@ class ContactForm extends Component {
         var warning2;
 
 
+
         if (emailWrong) {
             warning1 = <p>Please write valid email</p>
         }
@@ -240,7 +243,6 @@ class ContactForm extends Component {
                     </label>
                             <br />
                             <input
-                                classname="inputField"
                                 name="name"
                                 type="text"
                                 defaultValue={this.props.name}
@@ -254,7 +256,6 @@ class ContactForm extends Component {
                     </label>
                             <br />
                             <input
-                                classname="inputField"
                                 name="phoneNumber"
                                 type="text"
                                 defaultValue={this.props.phoneNumber}
@@ -271,7 +272,6 @@ class ContactForm extends Component {
                     </label>
                             <br />
                             <input
-                                classname="inputField"
                                 name="email"
                                 type="email"
                                 defaultValue={this.props.email}
