@@ -3,6 +3,13 @@ import Delete from "../images/delete.svg";
 import Cancel from "../images/cancel.svg";
 import Accept from "../images/accept.svg";
 
+//ToDo: 
+/*
+ @todo move HTML content to its own components, add/update forms
+ @todo move validation functions to separate validation.js file
+ @remove unused code
+ @comment a bit more on function that do logic operations
+*/
 class ContactList extends Component {
     constructor(props) {
         super(props);
@@ -21,13 +28,16 @@ class ContactList extends Component {
         let currentList = [];
         let newList = [];
 
+        // if search field has a value, do the method
+
         if (event.target.value !== "") {
             currentList = this.props.contacts;
+            // Put everything in lowercase, because filter is case sensitive
             newList = currentList.filter(item => {
                 const searchName = item.name.toString().toLowerCase();
                 const searchEmail = item.email.toString().toLowerCase();
                 const filter = event.target.value.toString().toLowerCase();
-
+                // returns new list that includes either name or email
                 return (
                     searchName.includes(filter) +
                     searchEmail.includes(filter)
@@ -39,44 +49,23 @@ class ContactList extends Component {
         this.setState({
             filtered: newList
         })
-        console.log("after search");
-        console.log(this.state.filtered);
-        console.log(newList);
 
     }
-
-    // needed so list can be mapped
-    componentDidMount() {
-        console.log("is called");
-        this.setState({
-            filtered: this.props.contacts
-        });
-        console.log("filtered list on didmount");
-        console.log(this.state.filtered);
-
-    }
-
-
 
 
     // Checks which button is clicked and acts accordingly.
     handleClick(contact, index, event) {
 
-
+        // if delete is pressed, delete a contact from list
         if (event.target.name === "deleteButton") {
-            console.log("let's delete");
             this.props.deleteContact(contact);
 
             this.setState(prevState => ({
                 filtered: prevState.filtered.filter(contact => contact !== contact)
             }));
 
-            console.log("new filtered list:");
-            console.log(this.state.filtered);
-            console.log(this.props.contacts);
-
-
         }
+        // if confirm button is pressed, activates edit mode
         else if (event.target.name === "deleteConfirm") {
 
             this.props.activateEdit(contact, index, this.state.filtered);
@@ -85,10 +74,12 @@ class ContactList extends Component {
             }));
 
         }
+        // if cancel button is pressed, deactivates edit mode
         else if (event.target.name === "deleteCancel") {
             this.props.deActivateEdit(contact);
 
         }
+        // opens update contact view on the clicked contact
         else {
             this.props.listOnClick(contact, index);
         }
@@ -97,11 +88,10 @@ class ContactList extends Component {
     componentDidUpdate(prevProps) {
 
         var newList = [];
-
+        // Compares contact lists and if there's a difference, filters list according to search input, if there is text
         if (prevProps.contacts !== this.props.contacts) {
-
+            //Filters according to search input if there is text
             if (this.refs.searchInput.value !== "") {
-                console.log("we are doing this");
                 newList = this.props.contacts.filter(item => {
                     const searchName = item.name.toString().toLowerCase();
                     const searchEmail = item.email.toString().toLowerCase();
@@ -120,8 +110,9 @@ class ContactList extends Component {
                 filtered: newList
             });
         }
-        console.log(this.state.filtered);
     }
+
+
 
 
 
@@ -129,74 +120,57 @@ class ContactList extends Component {
 
 
 
-        if (this.state.filtered) {
-
-            return (
+        return (
 
 
-                <div className="contactList">
+            <div className="contactList">
 
+                <input type="text"
+                    className="inputSearch"
+                    placeholder="Search..."
+                    onChange={this.search}
+                    ref="searchInput"
+                />
 
-                    <input type="text"
-                        className="inputSearch"
-                        placeholder="Search..."
-                        onChange={this.search}
-                        ref="searchInput"
-                    />
+                <ul>
+                    {this.state.filtered.map((contact, index) =>
+                        <li key={contact.id}
+                            onClick={(event) =>
+                                this.handleClick(contact, index, event)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className="cell">{contact.name}</div>
+                            {contact.editMode ? [<input
+                                type="image"
+                                name="deleteButton"
+                                src={Accept}
+                                alt=""
+                                width="20"
+                                height="20"
 
-
-
-
-                    <ul>
-                        {this.state.filtered.map((contact, index) =>
-                            <li key={contact.id}
-                                onClick={(event) =>
-                                    this.handleClick(contact, index, event)}
-                                style={{ cursor: 'pointer' }}
-                            >
-                                <div className="cell">{contact.name}</div>
-                                {contact.editMode ? [<input
+                            />, <input
+                                type="image"
+                                alt=""
+                                name="deleteCancel"
+                                src={Cancel}
+                                width="20"
+                                height="20"
+                            />]
+                                :
+                                <input
                                     type="image"
-                                    name="deleteButton"
-                                    src={Accept}
+                                    name="deleteConfirm"
+                                    src={Delete}
                                     alt=""
                                     width="20"
                                     height="20"
-
-                                />, <input
-                                    type="image"
-                                    alt=""
-                                    name="deleteCancel"
-                                    src={Cancel}
-                                    width="20"
-                                    height="20"
-                                />]
-                                    :
-                                    <input
-                                        type="image"
-                                        name="deleteConfirm"
-                                        src={Delete}
-                                        alt=""
-                                        width="20"
-                                        height="20"
-                                    />}
-                            </li>)}
-                    </ul>
+                                />}
+                        </li>)}
+                </ul>
 
 
-                </div>
-            )
-        }
-
-        else {
-            return (
-                <div>
-                    <h1>ContactList</h1>
-                    <p>No contacts yet..</p>
-                </div>
-            )
-        }
-
+            </div>
+        )
     }
 }
 

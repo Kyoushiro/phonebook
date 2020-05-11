@@ -33,6 +33,8 @@ class App extends Component {
     this.activateEdit = this.activateEdit.bind(this);
     this.deActivateEdit = this.deActivateEdit.bind(this);
     this.toggleUpdate = this.toggleUpdate.bind(this);
+    this.getContactsFromDB = this.getContactsFromDB.bind(this);
+    this.deleteContactFromDB = this.deleteContactFromDB.bind(this);
 
 
     //this.listOnClick = this.listOnClick.bind(this);
@@ -49,21 +51,15 @@ class App extends Component {
   }
 
   incrementId() {
-    this.setState(prevState => ({
-      id: prevState.id + 1
-    }));
-    console.log(this.state.id);
-    return this.state.id
+    const maxID = Math.max(...this.state.contacts.map(contact => contact.id));
+    return maxID + 1
   }
 
   // update selected contact
 
   updateList(contact, index) {
-    console.log("index");
-    console.log(index);
 
     let contacts = [...this.state.contacts];
-    console.log(contact.id);
     var newIndex = contacts.findIndex(cont => cont.id === contact.id);
     let item = { ...contacts[index] };
     item.name = contact.name;
@@ -72,8 +68,6 @@ class App extends Component {
     item.id = contact.id;
     contacts[newIndex] = item;
     this.setState({ contacts });
-    console.log("new index");
-    console.log(newIndex);
 
   }
 
@@ -89,9 +83,6 @@ class App extends Component {
   }
   // When person clicks on the contact, open that contacts detail page
   listOnClick(contact, index) {
-    console.log(index);
-    console.log(contact.name);
-    console.log(contact.phoneNumber);
 
     this.setState({
       isListItem: true,
@@ -102,7 +93,6 @@ class App extends Component {
       id: contact.id
     })
     this.toggleUpdate();
-    console.log()
 
   }
   // Change view back to Homepage
@@ -128,10 +118,27 @@ class App extends Component {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== contacts.id)
     }));
+    this.deleteContactFromDB(contacts.id);
 
-    console.log("let's see the contacts:");
-    console.log(this.state.contacts);
   }
+  // Deletes contact from database
+  deleteContactFromDB(id) {
+    fetch("http://localhost:8081/delete_user", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        "id": id
+      })
+
+
+
+    })
+      .then((result) => result.json())
+  }
+
   // when user clicks delete button, opens up confirmation buttons
   activateEdit(contact, index, filteredList) {
     let contacts = [...this.state.contacts];
@@ -144,15 +151,31 @@ class App extends Component {
   deActivateEdit(contact) {
     let contacts = [...this.state.contacts];
     var newIndex = this.state.contacts.findIndex(cont => cont.phoneNumber === contact.phoneNumber);
-    console.log(contacts);
     contacts[newIndex].editMode = false
     this.setState({ contacts });
   }
-
+  //Toggles addContact page to either be shown or hidden
   togglePopup() {
     this.setState({
       showPopup: !this.state.showPopup
     });
+  }
+  // Gets contacts from database
+  getContactsFromDB() {
+    fetch("http://localhost:8081/get_users")
+      .then(res => res.json())
+      .then(
+        (result) => {
+
+          this.setState({ contacts: Object.values(result) })
+        }
+
+
+      )
+  }
+
+  componentDidMount() {
+    this.getContactsFromDB();
   }
 
 

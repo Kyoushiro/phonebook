@@ -6,29 +6,51 @@ class AddContact extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            emailWrong: false,
-            phoneNumberWrong: false,
-            newContact: true
+            newContact: true,
+            isListItem: false
 
         }
+        this.addContactToDatabase = this.addContactToDatabase.bind(this);
     }
-    // validates the contact and then either adds contact to list or if not valid, says to try again
 
 
 
-    // adds contact to list
+
+    // adds contact to list and takes user back to homepage
     addContactToList(name, phoneNumber, email) {
         var obj = { 'name': name, 'phoneNumber': phoneNumber, 'email': email, 'editMode': false, 'id': this.props.incrementId() };
         const newContact = this.props.contacts.slice();
         newContact.push(obj);
+        console.log(obj.id);
         this.props.addToList(newContact);
-        console.log("new contact");
-        console.log(this.props.contacts);
-        console.log("islistitem");
-        console.log(this.props.isListItem);
+        this.addContactToDatabase(name, phoneNumber, email, obj.id);
 
         this.props.backToHome();
 
+    }
+    // adds contact to database
+    addContactToDatabase(name, phoneNumber, email, id) {
+        fetch("http://localhost:8081/add_user", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                "name": name,
+                "phoneNumber": phoneNumber,
+                "email": email,
+                "id": id
+            })
+
+
+
+        })
+            .then((result) => result.json())
+    }
+    // Takes user back to homepage
+    cancelAddContact() {
+        this.props.backToHome();
     }
 
 
@@ -40,12 +62,12 @@ class AddContact extends Component {
 
                 <React.Fragment>
                     <ContactForm
-                        backToHome={this.props.backToHome}
                         addContact={this.addContactToList.bind(this)}
-                        emailWrong={this.state.emailWrong}
-                        phoneNumberWrong={this.state.phoneNumberWrong}
                         contacts={this.props.contacts}
                         newContact={this.state.newContact}
+                        cancel={<input className="button" type="button" value="Cancel" onClick={this.cancelAddContact.bind(this)}></input>}
+                        title={<h1>Add Contact</h1>}
+                        isListItem={this.state.isListItem}
 
                     />
                 </React.Fragment>

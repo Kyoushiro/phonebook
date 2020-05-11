@@ -1,52 +1,64 @@
 import React, { Component } from "react";
 import ContactForm from "./contactForm";
-import { render } from "@testing-library/react";
+import BackArrow from "../images/arrowLeft.svg";
 
 class updateContact extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            emailWrong: false,
-            phoneNumberWrong: false
-        }
+        this.updateContactInDB = this.updateContactInDB.bind(this);
     }
     // Validates contact and then updates the contact
     updateContact(contact) {
-        console.log("we are here");
-        console.log("id");
-        console.log(contact.id);
-        console.log(contact.phoneNumber);
         this.props.updateList(contact, this.props.index);
+        this.updateContactInDB(contact.name, contact.phoneNumber, contact.email, contact.id)
         this.props.toggleUpdate();
 
+
     }
-    // allows to write into input field
-    updateState(event) {
-        this.props.updateValue(event);
+
+    // Takes user back to homepage if back arrow is pressed
+    cancelUpdateContact() {
+        this.props.toggleUpdate();
+    }
+
+    // adds contact to database
+    updateContactInDB(name, phoneNumber, email, id) {
+        fetch("http://localhost:8081/update_user", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                "name": name,
+                "phoneNumber": phoneNumber,
+                "email": email,
+                "id": id
+            })
+
+
+
+        })
+            .then((result) => result.json())
     }
 
 
     render() {
         return (
 
-
-
             <ContactForm
                 isListItem={this.props.isListItem}
-                backToHome={this.props.backToHome}
                 name={this.props.name}
                 phoneNumber={this.props.phoneNumber}
                 email={this.props.email}
                 updateContact={this.updateContact.bind(this)}
-                updateState={this.updateState.bind(this)}
-                emailWrong={this.state.emailWrong}
-                phoneNumberWrong={this.state.phoneNumberWrong}
                 contacts={this.props.contacts}
                 index={this.props.index}
                 id={this.props.id}
                 toggleUpdate={this.props.toggleUpdate}
+                cancel={<input type="image" height="30" width="30" src={BackArrow} alt="" value="Cancel" onClick={this.cancelUpdateContact.bind(this)}></input>}
+                title={<h1>View Contact</h1>}
             />
-
 
         )
     }

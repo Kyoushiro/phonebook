@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../App.css";
-import BackArrow from "../images/arrowLeft.svg";
+import emailValidation from "./emailValidation";
+import phoneNumberValidation from "./phoneNumberValidation";
 
 class ContactForm extends Component {
     constructor(props) {
@@ -19,43 +20,39 @@ class ContactForm extends Component {
         this.statusHandler = this.statusHandler.bind(this);
         this.numberHandler = this.numberHandler.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.cancelAddContact = this.cancelAddContact.bind(this);
-        this.cancelUpdateContact = this.cancelUpdateContact.bind(this);
         this.getFormValues = this.getFormValues.bind(this);
         this.handleUpdateContact = this.handleUpdateContact.bind(this);
         this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
+        this.validateForm = this.validateForm.bind(this);
     }
 
-    //
+    // Gets form values from parent. Empty if it's add contact and filled with contact data if it's list item
 
     getFormValues() {
         var name = this.props.name;
         var phoneNumber = this.props.phoneNumber;
         var email = this.props.email;
         this.setState({
-            name: [name],
-            phoneNumber: [phoneNumber],
-            email: [email]
+            name: name,
+            phoneNumber: phoneNumber,
+            email: email
         })
-    }
 
+
+    }
+    // if listitem, gives state contact values from prop. Else it gives them empty values
     componentDidMount() {
 
         this.getFormValues();
-        console.log(this.props.contacts);
-
-
     }
 
 
     // Updates input text when writing
     statusHandler(event) {
-
         this.setState({
             [event.target.name]: event.target.value
-        })
-
+        });
     }
     // only allows numbers and + sign to be written
     numberHandler(event) {
@@ -70,33 +67,16 @@ class ContactForm extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log(event.target.name.value);
         var name = event.target.name.value;
         var phoneNumber = event.target.phoneNumber.value;
         var email = event.target.email.value;
 
-        console.log("validation states:");
-        console.log(this.state.emailWrong);
-        console.log(this.state.phoneNumberWrong);
-
-
-        if (this.state.emailWrong || this.state.phoneNumberWrong || phoneNumber === "" || email === "") {
-            alert("form not valid yet");
-        }
-        else {
-            this.props.addContact(name, phoneNumber, email);
-        }
-
+        this.props.addContact(name, phoneNumber, email);
 
     }
 
-    // Takes user back to homepage
-    cancelAddContact() {
-        this.props.backToHome();
-    }
-    cancelUpdateContact() {
-        this.props.toggleUpdate();
-    }
+
+
 
     // updates the contact
 
@@ -107,85 +87,41 @@ class ContactForm extends Component {
         var email = event.target.email.value;
         var id = this.props.id;
         var contact = { 'name': name, 'phoneNumber': phoneNumber, 'email': email, 'id': id };
-        console.log("id:");
-        console.log(id);
-        if (this.state.emailWrong || this.state.phoneNumberWrong) {
-            alert("form not valid yet");
-        }
-        else {
-            this.props.updateContact(contact)
-        }
+
+        this.props.updateContact(contact)
 
     }
+    // Validates phonenumber
+    validatePhoneNumber(number, contacts, isListItem, id) {
+        var checkFail = phoneNumberValidation(number, contacts, isListItem, id);
 
-    validatePhoneNumber(event) {
+        return checkFail;
+    }
+    // Validates email
+    validateEmail(em) {
+        var checkFail = emailValidation(em);
+        return checkFail;
+    }
+    //validates form and then either calls update contact method or add contact method
+    validateForm(event) {
         event.preventDefault();
+        var emailWrong = this.validateEmail(event.target.email.value);
+        var phoneNumberWrong = this.validatePhoneNumber(event.target.phoneNumber.value, this.props.contacts, this.props.isListItem, this.props.id);
 
-
-
-
-
-        var regex = /^((04[0-9]{1})(\s?|-?)|019(\s?|-?)|[+]?358(\s?|-?)19|050(\s?|-?)|0457(\s?|-?)|[+]?358(\s?|-?)50|0358(\s?|-?)50|00358(\s?|-?)50|[+]?358(\s?|-?)4[0-9]{1}|0358(\s?|-?)4[0-9]{1}|00358(\s?|-?)4[0-9]{1})(\s?|-?)(([0-9]{3,4})(\s|\-)?[0-9]{2,3})$/;
-
-        if (event.target.value === undefined) {
-            this.setState({
-                phoneNumberWrong: true
-            })
-        }
-
-        else if (regex.test(event.target.value) === false) {
-            this.setState({
-                phoneNumberWrong: true
-
-            })
-
-        }
-        else if (this.props.contacts.some(contact => contact.phoneNumber === event.target.value) === true) {
-
-
+        //checks if email validation and phonenumber validation went through
+        if (emailWrong === false && phoneNumberWrong === false) {
             if (this.props.isListItem) {
-                var filteredId = this.props.contacts.findIndex(obj => obj.id === this.props.id);
-                var filteredPhone = this.props.contacts.findIndex(obj => obj.phoneNumber === event.target.value);
-
-
-                if (regex.test(event.target.value) === false || filteredId !== filteredPhone) {
-                    this.setState({
-                        phoneNumberWrong: true
-                    })
-                }
-                else {
-                    this.setState({
-                        phoneNumberWrong: false
-                    })
-                }
+                this.handleUpdateContact(event);
             }
             else {
-                this.setState({
-                    phoneNumberWrong: true
-                })
+                this.handleSubmit(event);
             }
-
-
-
-
         }
+        // if email or phonenumber validation didn't go through, change their state to wrong
         else {
             this.setState({
-                phoneNumberWrong: false
-            })
-        }
-    }
-
-    validateEmail(event) {
-        var splitEmail = event.target.value.split("@");
-        if (splitEmail[0].length < 3 && splitEmail !== undefined) {
-            this.setState({
-                emailWrong: true
-            })
-        }
-        else {
-            this.setState({
-                emailWrong: false
+                emailWrong: emailWrong,
+                phoneNumberWrong: phoneNumberWrong
             })
         }
     }
@@ -193,51 +129,14 @@ class ContactForm extends Component {
 
     render() {
 
-        var isListItem = this.props.isListItem;
-        var title;
-        var cancel;
-        var onSubmit;
-        var phoneNumberWrong = this.state.phoneNumberWrong;
-        var emailWrong = this.state.emailWrong
-        var warning1;
-        var warning2;
-
-
-
-        if (emailWrong) {
-            warning1 = <p>Please write valid email</p>
-        }
-        if (phoneNumberWrong) {
-            warning2 = <p>Either this phonenumber already exists or it is not valid</p>
-        }
-
-        if (isListItem) {
-            this.state.name = this.props.name
-            title = <h1>View Contact</h1>;
-
-            onsubmit = this.handleUpdateContact;
-
-            cancel = <input type="image" height="30" width="30" src={BackArrow} alt="" value="Cancel" onClick={this.cancelUpdateContact}></input>
-        }
-
-        else {
-
-            title = <h1>Add Contact</h1>;
-            onsubmit = this.handleSubmit;
-
-            cancel = <input className="button" type="button" value="Cancel" onClick={this.cancelAddContact}></input>
-            //          onSubmit = this.handleSubmit;
-
-        }
-
         return (
             <React.Fragment>
                 <div className="contactContainer">
                     <div className="contactForm">
 
 
-                        <form className="form" onSubmit={onSubmit}>
-                            {title}
+                        <form className="form" onSubmit={this.validateForm}>
+                            {this.props.title}
                             <label>
                                 Name:
                     </label>
@@ -260,9 +159,11 @@ class ContactForm extends Component {
                                 type="text"
                                 defaultValue={this.props.phoneNumber}
                                 onChange={this.numberHandler}
-                                onKeyUp={this.validatePhoneNumber}
                             />
-                            {warning2}
+                            {
+                                this.state.phoneNumberWrong === true &&
+                                <p>Either phoneNumber is not in correct format or it already exists in contacts</p>
+                            }
 
                             <br />
                             <br />
@@ -276,11 +177,14 @@ class ContactForm extends Component {
                                 type="email"
                                 defaultValue={this.props.email}
                                 onChange={this.statusHandler}
-                                onKeyUp={this.validateEmail}
                             />
-                            {warning1}
+                            {
+                                this.state.emailWrong === true &&
+                                <p>Please write valid email</p>
+                            }
+
                             <br /> <br />
-                            {cancel}
+                            {this.props.cancel}
                             <div className="divider" />
                             <input
                                 type="submit"
