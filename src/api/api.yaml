@@ -1,0 +1,40 @@
+ swagger: "2.0"
+    info:
+      title: "Phonebook methods"
+      description: "Get CRUD operations from phonebook"
+      version: "1.0.0"
+    # This field will be replaced by the deploy_api.sh script.
+    host: "phonebook-277012.ey.r.appspot.com"
+    schemes:
+      - "https"
+    paths:
+      "/add_user":
+        get:
+          description: "Get all existing users"
+          parameters:
+ *      - name: name
+ *        in: query
+ *        description: Name of the contact
+ *        required: false
+ *        schema:
+ *          type: string
+ *          format: string
+ *      - name: phoneNumber
+ *        in: query
+ *        description: Phonenumber of the contact
+ *        required: true
+ *        schema:
+ *          type: string
+ *          format: string
+ *      - name: email
+ *        in: query
+ *        description: Email of the contact
+ *        required: true
+ *        schema:
+ *          type: string
+ *          format: string
+ *    responses:
+ *      200:
+ *        description: Successfully added a user
+            400:
+              description: "The IATA code is invalid or missing."
