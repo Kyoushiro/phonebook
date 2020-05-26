@@ -17,7 +17,7 @@ class App extends Component {
       isListItem: false,
       index: "",
       filtered: [],
-      id: 0,
+      id: 1,
       showPopup: false,
       showUpdateContact: false,
 
@@ -123,18 +123,12 @@ class App extends Component {
   }
   // Deletes contact from database
   deleteContactFromDB(id) {
-    fetch("http://localhost:8081/delete_user", {
+    fetch(`https://phonebook-277012.ey.r.appspot.com/delete_user?id=${id}`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
         'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        "id": id
-      })
-
-
-
+      }
     })
       .then((result) => result.json())
   }
@@ -162,7 +156,7 @@ class App extends Component {
   }
   // Gets contacts from database
   getContactsFromDB() {
-    fetch("http://localhost:8081/get_users")
+    fetch("https://phonebook-277012.ey.r.appspot.com/get_users")
       .then(res => res.json())
       .then(
         (result) => {

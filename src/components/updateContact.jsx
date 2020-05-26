@@ -23,8 +23,8 @@ class updateContact extends Component {
 
     // adds contact to database
     updateContactInDB(name, phoneNumber, email, id) {
-        fetch("http://localhost:8081/update_user", {
-            method: "POST",
+        fetch(`https://phonebook-277012.ey.r.appspot.com/update_user?name=${name}&phoneNumber=${phoneNumber}&email=${email}&id=${id}`, {
+            method: "PUT",
             headers: {
                 "Content-type": "application/json",
                 'Accept': 'application/json'

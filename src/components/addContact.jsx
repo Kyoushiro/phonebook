@@ -23,14 +23,19 @@ class AddContact extends Component {
         newContact.push(obj);
         console.log(obj.id);
         this.props.addToList(newContact);
+        console.log(phoneNumber);
         this.addContactToDatabase(name, phoneNumber, email, obj.id);
+
 
         this.props.backToHome();
 
     }
     // adds contact to database
     addContactToDatabase(name, phoneNumber, email, id) {
-        fetch("http://localhost:8081/add_user", {
+        if (id = -Infinity) {
+            id = 1;
+        }
+        fetch(`https://phonebook-277012.ey.r.appspot.com/add_user?name=${name}&phoneNumber=${phoneNumber}&email=${email}&id=${id}`, {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
