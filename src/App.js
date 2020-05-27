@@ -130,7 +130,6 @@ class App extends Component {
         'Accept': 'application/json'
       }
     })
-      .then((result) => result.json())
   }
 
   // when user clicks delete button, opens up confirmation buttons

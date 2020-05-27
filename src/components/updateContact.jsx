@@ -39,7 +39,7 @@ class updateContact extends Component {
 
 
         })
-            .then((result) => result.json())
+        //.then((result) => result.json())
     }
 
 

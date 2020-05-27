@@ -21,9 +21,11 @@ class AddContact extends Component {
         var obj = { 'name': name, 'phoneNumber': phoneNumber, 'email': email, 'editMode': false, 'id': this.props.incrementId() };
         const newContact = this.props.contacts.slice();
         newContact.push(obj);
-        console.log(obj.id);
+        if (obj.id < 1) {
+            obj.id = 1;
+        }
+
         this.props.addToList(newContact);
-        console.log(phoneNumber);
         this.addContactToDatabase(name, phoneNumber, email, obj.id);
 
 
@@ -32,7 +34,7 @@ class AddContact extends Component {
     }
     // adds contact to database
     addContactToDatabase(name, phoneNumber, email, id) {
-        if (id = -Infinity) {
+        if (id === -Infinity) {
             id = 1;
         }
         fetch(`https://phonebook-277012.ey.r.appspot.com/add_user?name=${name}&phoneNumber=${phoneNumber}&email=${email}&id=${id}`, {
