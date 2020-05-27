@@ -5,14 +5,14 @@ var urlencodedParser = bodyParser.json();
 var createPool = require('./dbConfig.js');
 var cors = require('cors');
 
-
+// Set headers for cross purposes
 app.use((req, res, next) => {
     res.set('Content-Type', 'text/html');
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-
+// Allows cross for updating a contact
 app.options('/update_user', cors())
 
 const ensureSchema = async (pool) => {
@@ -50,8 +50,10 @@ app.use(async (req, res, next) => {
     }
 });
 
+//Setting up array, that is used to store contacts
 var array = [];
 
+// Front page
 app.get("/", function (req, res) {
     res.send('Hello from API');
 });
@@ -100,9 +102,8 @@ app.post('/add_user', urlencodedParser, async function (req, res) {
     var name = req.query.name;
     var phoneNumber = req.query.phoneNumber;
     var email = req.query.email;
-    console.log(req.body.id);
     var id;
-
+    // Checking request sent id and then creating new id for new contact accordingly
     if (req.body.id === null || req.body.id === undefined) {
 
         var newId = JSON.parse(array);
@@ -114,11 +115,12 @@ app.post('/add_user', urlencodedParser, async function (req, res) {
         id = req.body.id;
     }
 
-
+    // Adds new contact to database
     try {
         var sql = `INSERT INTO contacts (id, name, phonenumber, email ) VALUES (?, ?, ?, ?)`;
         await pool.query(sql, [id, name, phoneNumber, email]);
     }
+    // Catches error if happens
     catch (err) {
         console.log(err);
         res
@@ -145,15 +147,12 @@ app.post('/add_user', urlencodedParser, async function (req, res) {
  *
  */
 app.get('/get_users', function (req, res) {
-
-    console.log("getting users");
+    // Gets all contacts from database
     var sql = `SELECT * FROM contacts`;
     pool.query(sql, function (err, data) {
         if (err) throw err;
-        console.log("records received");
         array.length = 0;
         array.push(JSON.stringify(data));
-        console.log(array);
 
 
         res.send(data);
@@ -187,7 +186,7 @@ app.get('/get_users', function (req, res) {
 app.post('/delete_user', urlencodedParser, function (req, res) {
 
     id = req.query.id
-
+    // Deletes user from database by id
     var sql = `DELETE FROM contacts WHERE id='${id}'`
     pool.query(sql, function (err, data) {
         if (err) throw err;
@@ -244,7 +243,7 @@ app.put('/update_user', cors(), urlencodedParser, function (req, res) {
         phoneNumber = req.query.phoneNumber,
         email = req.query.email,
         id = req.query.id
-
+    // Updates user with given id
     var sql = `UPDATE contacts SET name = '${name}', phoneNumber = '${phoneNumber}',
     email = '${email}' WHERE id='${id}'`
     pool.query(sql, function (err, data) {
