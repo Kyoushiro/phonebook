@@ -1,67 +1,31 @@
-//var express = require('express');
-//var app = express();
-var bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.json();
-var createPool = require('./dbConfig.js');
-var cors = require('cors');
+/**
+ *  @swagger
+ * /get_users:
+ *  get:
+ *    description: Use to request all contacts
+ *    responses:
+ *      '200':
+ *        description: Successfully got all contacts
+ *      '508':
+ *        description: Connection timed out
+ *
+ *
+ */
+function getUsers(pool, array, res) {
+    // Gets all contacts from database
+    var sql = `SELECT * FROM contacts`;
+    pool.query(sql, function (err, data) {
+        if (err) throw err;
+        array.length = 0;
+        array.push(JSON.stringify(data));
 
-// Set headers for cross purposes
-app.use((req, res, next) => {
-    res.set('Content-Type', 'text/html');
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-// Allows cross for updating a contact
-app.options('/update_user', cors())
 
-const ensureSchema = async (pool) => {
-    // Wait for tables to be created (if they don't already exist).
-    await pool.query(
-        `CREATE TABLE IF NOT EXISTS contacts
-        ( id SERIAL NOT NULL, name CHAR(20) NULL,
-        phoneNumber CHAR(14) NOT NULL, email CHAR(254), PRIMARY KEY (id) );`
-    );
-    console.log(`Ensured that table 'contacts' exists`);
+        res.send(data);
+        res.end();
 
-};
-
-//Check if contacts database already exists. If not, create it
-let pool;
-const poolPromise = createPool()
-    .then(async (pool) => {
-        await ensureSchema(pool);
-        return pool;
-    })
-    .catch((err) => {
-        process.exit(1)
     });
 
-app.use(async (req, res, next) => {
-    if (pool) {
-        return next();
-    }
-    try {
-        pool = await poolPromise;
-        next();
-    }
-    catch (err) {
-        return next(err);
-    }
-});
-
-//Setting up array, that is used to store contacts
-var array = [];
-
-// Front page
-app.get("/", function (req, res) {
-    res.send('Hello from API');
-});
-
-
-
-
-// Routes
+}
 /**
  *  @swagger
  * /add_user:
@@ -97,73 +61,41 @@ app.get("/", function (req, res) {
  *      
  *
  */
-app.post('/add_user', urlencodedParser, async function (req, res) {
-
+async function addUser(req, res, array, pool) {
     var name = req.query.name;
     var phoneNumber = req.query.phoneNumber;
     var email = req.query.email;
     var id;
+    console.log("LETS SEE THE ARRAY");
+    console.log(array);
+    console.log(JSON.parse(array));
     // Checking request sent id and then creating new id for new contact accordingly
-    if (req.body.id === null || req.body.id === undefined) {
+    if (req.query.id === null || req.query.id === undefined) {
 
         var newId = JSON.parse(array);
         var newArray = newId.map(data => data.id);
         var maxID = Math.max(...newArray);
+        console.log(maxID);
         id = maxID + 1;
+        console.log(id);
     }
     else {
         id = req.body.id;
     }
 
     // Adds new contact to database
-    try {
-        var sql = `INSERT INTO contacts (id, name, phonenumber, email ) VALUES (?, ?, ?, ?)`;
-        await pool.query(sql, [id, name, phoneNumber, email]);
-    }
-    // Catches error if happens
-    catch (err) {
-        console.log(err);
-        res
-            .status(500)
-            .send("unable to add a contact")
-            .end();
-    }
-    console.log("woo");
-    res.status(200).send("successfully added a new contact").end();
+    var sql = `INSERT INTO contacts (id, name, phonenumber, email ) VALUES ('${id}', '${name}', '${phoneNumber}', '${email}')`;
 
-})
-
-
-/**
- *  @swagger
- * /get_users:
- *  get:
- *    description: Use to request all contacts
- *    responses:
- *      '200':
- *        description: Successfully got all contacts
- *      '508':
- *        description: Connection timed out
- *
- *
- */
-function getUsers(pool, array, res) {
-    // Gets all contacts from database
-    var sql = `SELECT * FROM contacts`;
     pool.query(sql, function (err, data) {
         if (err) throw err;
-        array.length = 0;
+        console.log("record updated");
         array.push(JSON.stringify(data));
-
-
-        res.send(data);
-        res.end();
-
     });
+    //var obj = { 'id': id, 'name': name, 'phoneNumber': phoneNumber, 'email': email }
+
+    res.status(200).send("successfully added a new contact").end();
 
 }
-
-
 /**
  *  @swagger
  * /delete_user:
@@ -184,7 +116,7 @@ function getUsers(pool, array, res) {
  *        description: Connection timed out
  *
  */
-app.post('/delete_user', urlencodedParser, function (req, res) {
+function deleteUser(req, res, pool) {
 
     id = req.query.id
     // Deletes user from database by id
@@ -192,11 +124,10 @@ app.post('/delete_user', urlencodedParser, function (req, res) {
     pool.query(sql, function (err, data) {
         if (err) throw err;
         console.log("record deleted");
+        res.send(data)
     });
     res.end();
-})
-
-
+}
 /**
  *  @swagger
  * /update_user:
@@ -238,7 +169,7 @@ app.post('/delete_user', urlencodedParser, function (req, res) {
  *        description: Connection timed out
  *
  */
-app.put('/update_user', cors(), urlencodedParser, function (req, res) {
+function updateUser(req, res, pool) {
 
     name = req.query.name,
         phoneNumber = req.query.phoneNumber,
@@ -250,8 +181,9 @@ app.put('/update_user', cors(), urlencodedParser, function (req, res) {
     pool.query(sql, function (err, data) {
         if (err) throw err;
         console.log("record updated");
+        res.send(data)
     });
-    res.end();
-})
 
-module.exports = getUsers();
+    res.end();
+}
+module.exports = { getUsers, addUser, deleteUser, updateUser }
